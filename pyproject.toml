@@ -1,0 +1,36 @@
+[project]
+name = "learn-smolagents"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "innovationpuls-creator", email = "innovationpuls@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "pillow>=12.3.0",
+    "resvg-py>=0.5.0",
+    "smolagents[openai]>=1.26.0",
+    "textual==8.2.8",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==9.1.1",
+    "pytest-asyncio==1.4.0",
+    "pytest-cov==7.1.0",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+local-codeagent = "learn_smolagents.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["learn_smolagents*"]
+
+[tool.setuptools.package-data]
+learn_smolagents = ["assets/*.svg"]

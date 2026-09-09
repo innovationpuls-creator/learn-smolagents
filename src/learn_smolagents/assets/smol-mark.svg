@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320" fill="none">
+  <title>Smol — ribbon contour</title>
+  <desc>Two open interlocking curves, drawn as crisp terracotta contours.</desc>
+  <g stroke="#D99778" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M242 116C251 96 231 72 207 61C173 44 130 47 101 67C72 87 59 123 73 149C83 168 102 180 121 174L201 113C217 102 233 104 242 116Z"/>
+    <path d="M78 204C69 224 89 248 113 259C147 276 190 273 219 253C248 233 261 197 247 171C237 152 218 140 199 146L119 207C103 218 87 216 78 204Z"/>
+  </g>
+</svg>

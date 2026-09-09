@@ -1,0 +1,25 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+.local/
+
+# Isolated Python environments and test output
+.venv-*/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# macOS/editor local files
+.DS_Store
+.idea/
