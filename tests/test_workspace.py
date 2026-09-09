@@ -67,7 +67,7 @@ async def test_manager_create_switch_delete_and_resume(tmp_path, size):
     async with app.run_test(size=size) as pilot:
         app._append("You", "old workspace")
         old_agent = app.agent
-        app.query_one("#prompt", Input).value = "draft"
+        app.query_one("#prompt").value = "draft"
         await pilot.press("ctrl+w")
         await pilot.pause()
         assert isinstance(app.screen, WorkspaceManager)
@@ -81,7 +81,7 @@ async def test_manager_create_switch_delete_and_resume(tmp_path, size):
         assert app.agent is not old_agent
         assert app.agent.workspace is app.workspace
         assert not app.transcript
-        assert app.query_one("#prompt", Input).value == "draft"
+        assert app.query_one("#prompt").value == "draft"
         await pilot.press("ctrl+w")
         await pilot.pause()
         await pilot.click("#delete-workspace")
@@ -94,7 +94,7 @@ async def test_manager_create_switch_delete_and_resume(tmp_path, size):
         assert app.workspace.root is None
         await pilot.press("enter")
         assert not app.busy
-        assert app.query_one("#prompt", Input).value == "draft"
+        assert app.query_one("#prompt").value == "draft"
 
 
 @pytest.mark.asyncio
@@ -117,7 +117,7 @@ async def test_manager_resize_and_cancel(tmp_path):
         await pilot.press("escape")
         await pilot.pause()
         assert not isinstance(app.screen, WorkspaceManager)
-        assert app.query_one("#prompt", Input).has_focus
+        assert app.query_one("#prompt").has_focus
         assert app.screen.has_class("compact")
 
 

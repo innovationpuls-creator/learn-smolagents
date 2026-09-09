@@ -3,9 +3,8 @@ from __future__ import annotations
 from typing import Protocol
 
 import pytest
-from textual.widgets import Input
-
-from learn_smolagents.ui.app import LocalCodeAgentApp
+from learn_smolagents.ui.app import BACKGROUND, LocalCodeAgentApp
+from learn_smolagents.ui.composer import PromptInput as Input
 
 
 class AgentRunner(Protocol):
@@ -132,7 +131,7 @@ async def test_conversation_has_uniform_warm_background_with_either_focus(size) 
                 for y in range(region.y, region.bottom)
                 for x in range(region.x, region.right)
             }
-            assert backgrounds == {Color.parse("#201e1b")}
+            assert backgrounds == {Color.parse(BACKGROUND)}
 
 
 @pytest.mark.asyncio

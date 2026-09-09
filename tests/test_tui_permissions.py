@@ -2,7 +2,7 @@ import asyncio
 from unittest.mock import patch
 
 import pytest
-from textual.widgets import Input
+from learn_smolagents.ui.composer import PromptInput as Input
 
 from learn_smolagents.ui.app import LocalCodeAgentApp
 from learn_smolagents.ui.approval import ApprovalScreen
