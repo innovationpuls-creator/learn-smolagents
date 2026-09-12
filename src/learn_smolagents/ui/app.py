@@ -42,6 +42,7 @@ from learn_smolagents.ui.theme import (
     BACKGROUND,
     BG_BASE,
     CODE_THEME,
+    FG_MUTED,
     FG_PRIMARY,
     MARKDOWN_THEME,
     format_agent_turn_header,
@@ -212,7 +213,7 @@ class LocalCodeAgentApp(App[None]):
             # A user-initiated cancel is not a failure. Keep the wording neutral so
             # it matches the interrupt paths in _run_prompt and the event renderer.
             self._set_status("已取消当前请求")
-            self._append("Trace", "任务已被用户取消（Ctrl+C）。")
+            self._append("Notice", "任务已被用户取消（Ctrl+C）。")
             self.query_one(HeaderBar).update_agent_status("● 就绪")
             self.notify("当前任务已取消", severity="warning")
         else:
@@ -365,7 +366,7 @@ class LocalCodeAgentApp(App[None]):
                 "- `/settings` 或 `/model`：打开 LLM 模型与密钥配置\n"
                 "- `/mode`：切换权限模式（工作区内允许、区外审批 / 完全访问）\n"
             )
-            self._append("Trace", help_text)
+            self._append("Notice", help_text)
         elif command == "/clear":
             self.transcript.clear()
             self._turn = 0
@@ -457,7 +458,7 @@ class LocalCodeAgentApp(App[None]):
             if type(error) is AgentError and str(error) == "Agent interrupted.":
                 # A user-initiated interrupt is not a failure. Keep this wording in
                 # sync with the per-event path so both routes report the same thing.
-                self._append("Trace", "已按用户请求中断本轮执行。")
+                self._append("Notice", "已按用户请求中断本轮执行。")
                 self._set_activity("")
                 self.query_one(HeaderBar).update_agent_status("● 就绪")
             else:
@@ -730,7 +731,7 @@ class LocalCodeAgentApp(App[None]):
 
                 if isinstance(event.error, AgentParsingError):
                     self._append(
-                        "Trace",
+                        "Notice",
                         "回答格式不符合执行协议，本步骤未执行代码；Agent 将按原生流程尝试恢复。",
                     )
                     self._set_activity("回答格式错误，等待恢复...", error=False)
@@ -882,9 +883,11 @@ class LocalCodeAgentApp(App[None]):
         elif role == "Error":
             panel = render_error_card(message)
             conv.write_entry(panel)
-        elif role == "Trace":
-            panel = render_thought_card(message)
-            conv.write_entry(panel)
+        elif role == "Notice":
+            # System-level notices: cancels, interrupts, /help, protocol recovery.
+            # Model reasoning is written by _append_thought, which owns the
+            # "Trace" transcript entries and the thought card.
+            conv.write_entry(Text(message, style=FG_MUTED))
         elif role == "Tool":
             panel = render_tool_result_card(message, workspace_root=self.workspace.root)
             conv.write_entry(panel)
