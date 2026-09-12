@@ -6,7 +6,6 @@ __pycache__/
 *.egg-info/
 build/
 dist/
-/Users/torch/torch/opt/learn_smolagents/plan.md
 
 # Local configuration and credentials
 .env
@@ -24,3 +23,6 @@ coverage.xml
 # macOS/editor local files
 .DS_Store
 .idea/
+
+# Local assistant workspace data
+.workbuddy/
