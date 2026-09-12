@@ -1,8 +1,10 @@
 [project]
 name = "learn-smolagents"
 version = "0.1.0"
-description = "Add your description here"
+description = "A terminal coding agent built on smolagents and Textual, for learning purposes."
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     { name = "innovationpuls-creator", email = "innovationpuls@gmail.com" }
 ]
@@ -22,7 +24,7 @@ dev = [
 ]
 
 [build-system]
-requires = ["setuptools>=61"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project.scripts]
