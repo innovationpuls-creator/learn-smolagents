@@ -3,10 +3,13 @@
 from learn_smolagents.ui.theme.formatting import (
     format_agent_turn_header,
     format_error_header,
+    format_plan_header,
     format_thought_header,
     format_timeline_body,
     format_timestamp,
+    format_tool_call_header,
     format_tool_header,
+    format_tool_result_header,
     format_user_turn_header,
 )
 from learn_smolagents.ui.theme.styles import (
@@ -63,9 +66,13 @@ __all__ = [
     "WarmGruvboxStyle",
     "format_agent_turn_header",
     "format_error_header",
+    "format_plan_header",
     "format_thought_header",
     "format_timeline_body",
     "format_timestamp",
+    "format_tool_call_header",
     "format_tool_header",
+    "format_tool_result_header",
     "format_user_turn_header",
 ]
+

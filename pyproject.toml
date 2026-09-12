@@ -34,3 +34,6 @@ include = ["learn_smolagents*"]
 
 [tool.setuptools.package-data]
 learn_smolagents = ["assets/*.svg"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

@@ -62,29 +62,43 @@ class ConversationView(Vertical):
     def log(self) -> RichLog:
         return self.query_one("#conversation", RichLog)
 
-    def write_entry(self, heading: RenderableType, body: RenderableType) -> None:
+    def write_entry(
+        self,
+        heading: RenderableType | None = None,
+        body: RenderableType | None = None,
+    ) -> None:
         log = self.log
-        log.write(heading)
-        log.write(body)
+        if heading is not None:
+            log.write(heading)
+        if body is not None:
+            log.write(body)
         log.write("")
         self.call_after_refresh(log.scroll_end, animate=False, x_axis=False)
 
     def clear(self) -> None:
         self.log.clear()
+        self.hide_live_thought()
+        self.set_status("")
 
     def set_live_thought(self, text: str) -> None:
         live = self.query_one("#live-thought", Static)
-        if text:
-            live.update(f"◇ 思考中...\n{text}")
+        clean = text.strip()
+        if clean:
+            live.update(f"◇ 思考中...\n{clean}")
             live.display = True
+            self.call_after_refresh(self.log.scroll_end, animate=False, x_axis=False)
         else:
+            live.update("")
             live.display = False
 
     def hide_live_thought(self) -> None:
-        self.query_one("#live-thought", Static).display = False
+        live = self.query_one("#live-thought", Static)
+        live.update("")
+        live.display = False
 
     def set_status(self, message: str, *, error: bool = False) -> None:
         status = self.query_one("#status", Static)
         status.update(message)
         status.set_class(error, "error")
         status.display = bool(message)
+

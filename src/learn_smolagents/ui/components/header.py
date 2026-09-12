@@ -98,8 +98,8 @@ class HeaderBar(Vertical):
     }}
     #permission-mode {{
         height: 1;
-        width: 16;
-        min-width: 14;
+        width: auto;
+        min-width: 10;
         padding: 0 1;
         border: none;
         background: {BG_SURFACE};
@@ -149,11 +149,15 @@ class HeaderBar(Vertical):
             directory.tooltip = self._initial_workspace_tooltip
             yield directory
             yield Button(self._initial_llm_label, id="llm-settings", compact=True)
-            yield Button(
-                "权限：完全访问" if self._initial_full_access else "权限：需审批",
+            permission = Button(
+                "完全访问" if self._initial_full_access else "区外审批",
                 id="permission-mode",
                 compact=True,
             )
+            permission.tooltip = (
+                "工作区内允许读写和删除，工作区外需审批；完全访问模式不询问。"
+            )
+            yield permission
 
     def update_workspace(self, label: str, tooltip: str) -> None:
         directory = self.query_one("#workspace", Button)
@@ -164,8 +168,13 @@ class HeaderBar(Vertical):
         self.query_one("#llm-settings", Button).label = label
 
     def update_permission(self, full_access: bool) -> None:
+        compact = self.screen.has_class("compact")
         self.query_one("#permission-mode", Button).label = (
-            "权限：完全访问" if full_access else "权限：需审批"
+            "完全访问"
+            if full_access
+            else "区外审批"
+            if compact
+            else "区内允许 · 区外审批"
         )
 
     def update_agent_status(self, status: str) -> None:
