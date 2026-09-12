@@ -209,8 +209,10 @@ class LocalCodeAgentApp(App[None]):
                     worker.cancel()
             self.query_one(ComposerView).set_running(False)
             self.query_one(ConversationView).hide_live_thought()
-            self._set_status("! 当前请求已取消", error=True)
-            self._append("Error", "任务已被用户取消 (Ctrl+C)")
+            # A user-initiated cancel is not a failure. Keep the wording neutral so
+            # it matches the interrupt paths in _run_prompt and the event renderer.
+            self._set_status("已取消当前请求")
+            self._append("Trace", "任务已被用户取消（Ctrl+C）。")
             self.query_one(HeaderBar).update_agent_status("● 就绪")
             self.notify("当前任务已取消", severity="warning")
         else:

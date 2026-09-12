@@ -537,3 +537,25 @@ async def test_ordinary_failure_still_reports_error_and_recovers():
         )
         assert not any("已按用户请求中断" in entry for entry in app.transcript)
         assert app.busy is False
+
+
+@pytest.mark.asyncio
+async def test_cancel_uses_neutral_notice_and_releases_input():
+    """Ctrl-C on a running turn must not render a red error card."""
+    import time
+
+    class SlowAgent:
+        def run(self, prompt, event_callback=None):
+            time.sleep(1.5)  # stand-in for an in-flight model request
+            return "late"
+
+    app = LocalCodeAgentApp(agent=SlowAgent())
+    async with app.run_test() as pilot:
+        app.query_one("#prompt", PromptInput).value = "task"
+        await pilot.press("enter")
+        await pilot.pause()
+        app.action_cancel_or_quit()
+        await pilot.pause()
+        assert any("任务已被用户取消" in entry for entry in app.transcript)
+        assert not any(entry.startswith("Error > ") for entry in app.transcript)
+        assert app.busy is False
