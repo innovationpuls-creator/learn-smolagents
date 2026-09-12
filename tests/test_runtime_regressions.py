@@ -496,3 +496,44 @@ def test_recursive_tree_without_workspace_uses_common_parent():
     assert str(tree.label).startswith("📁 repo/")
     assert len(tree.children) == 2
     assert all(len(child.children) == 1 for child in tree.children)
+
+
+@pytest.mark.asyncio
+async def test_user_interrupt_is_not_reported_as_failure():
+    """Ctrl-C must not surface as a red failure card."""
+    from unittest.mock import MagicMock
+
+    from smolagents.utils import AgentError
+
+    class InterruptingAgent:
+        def run(self, prompt, event_callback=None):
+            raise AgentError("Agent interrupted.", MagicMock())
+
+    app = LocalCodeAgentApp(agent=InterruptingAgent())
+    async with app.run_test() as pilot:
+        app.query_one("#prompt", PromptInput).value = "task"
+        await pilot.press("enter")
+        await app.workers.wait_for_complete()
+        assert any("已按用户请求中断本轮执行" in entry for entry in app.transcript)
+        assert not any(entry.startswith("Error > ") for entry in app.transcript)
+        assert app.busy is False
+
+
+@pytest.mark.asyncio
+async def test_ordinary_failure_still_reports_error_and_recovers():
+    """Non-interrupt failures keep the visible error path and release the input."""
+
+    class FailingAgent:
+        def run(self, prompt, event_callback=None):
+            raise RuntimeError("boom")
+
+    app = LocalCodeAgentApp(agent=FailingAgent())
+    async with app.run_test() as pilot:
+        app.query_one("#prompt", PromptInput).value = "task"
+        await pilot.press("enter")
+        await app.workers.wait_for_complete()
+        assert any(
+            entry.startswith("Error > ") and "boom" in entry for entry in app.transcript
+        )
+        assert not any("已按用户请求中断" in entry for entry in app.transcript)
+        assert app.busy is False

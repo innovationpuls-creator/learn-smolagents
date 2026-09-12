@@ -452,9 +452,16 @@ class LocalCodeAgentApp(App[None]):
         except Exception as error:  # noqa: BLE001 - keep the TUI alive for agent failures.
             self._flush_stream_thought()
             self.query_one(ConversationView).hide_live_thought()
-            self._append("Error", str(error))
-            self._set_activity("!  请求失败，可重新发送", error=True)
-            self.query_one(HeaderBar).update_agent_status("! 异常")
+            if type(error) is AgentError and str(error) == "Agent interrupted.":
+                # A user-initiated interrupt is not a failure. Keep this wording in
+                # sync with the per-event path so both routes report the same thing.
+                self._append("Trace", "已按用户请求中断本轮执行。")
+                self._set_activity("")
+                self.query_one(HeaderBar).update_agent_status("● 就绪")
+            else:
+                self._append("Error", str(error))
+                self._set_activity("!  请求失败，可重新发送", error=True)
+                self.query_one(HeaderBar).update_agent_status("! 异常")
         else:
             self._flush_stream_thought()
             self.query_one(ConversationView).hide_live_thought()
