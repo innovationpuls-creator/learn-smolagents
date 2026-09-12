@@ -26,3 +26,7 @@ coverage.xml
 
 # Local assistant workspace data
 .workbuddy/
+
+# Local planning and coursework notes
+plan.md
+docs/
