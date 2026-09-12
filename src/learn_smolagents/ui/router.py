@@ -6,18 +6,58 @@ import asyncio
 from collections.abc import Callable
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any, Protocol
 
-from learn_smolagents.config import LLMConfig
+from textual.screen import Screen
+
+from learn_smolagents.config import LLMConfig, SettingsStore
 from learn_smolagents.ui.screens import (
     ApprovalScreen,
     DeleteWorkspaceScreen,
     SettingsScreen,
     WorkspaceManager,
 )
+from learn_smolagents.workspace import WorkspaceStore
 
-if TYPE_CHECKING:
-    from learn_smolagents.ui.app import LocalCodeAgentApp
+
+class RouterHost(Protocol):
+    """Structural type of the host app.
+
+    Declared here so this module never imports app.py: app.py imports UIRouter
+    at runtime, and the previous TYPE_CHECKING back-reference formed an import
+    cycle that basedpyright reported.
+    """
+
+    settings_store: SettingsStore
+    workspace_store: WorkspaceStore
+
+    @property
+    def busy(self) -> bool: ...
+
+    @property
+    def screen(self) -> Screen[Any]: ...
+
+    def notify(
+        self,
+        message: str,
+        *,
+        title: str = "",
+        severity: Any = "information",
+        timeout: float | None = None,
+        markup: bool = True,
+    ) -> Any: ...
+
+    # Declared as an attribute: App.push_screen is an overloaded method, and
+    # Protocol method signatures cannot match a set of overloads.
+    push_screen: Callable[..., Any]
+
+    def call_from_thread(
+        self, callback: Callable[..., Any], *args: Any, **kwargs: Any
+    ) -> Any: ...
+
+    def _settings_changed(self, config: LLMConfig | None) -> None: ...
+
+    def _workspace_changed(self, changed: bool | None) -> None: ...
 
 
 class Route(str, Enum):
@@ -32,7 +72,7 @@ class Route(str, Enum):
 class UIRouter:
     """Coordinates screen navigation, modal dialogs, and thread-to-UI approvals."""
 
-    def __init__(self, app: LocalCodeAgentApp) -> None:
+    def __init__(self, app: RouterHost) -> None:
         self.app = app
         self._approval_future: asyncio.Future[bool] | None = None
 
@@ -86,7 +126,7 @@ class UIRouter:
         future = asyncio.get_running_loop().create_future()
         self._approval_future = future
 
-        def answered(value: bool) -> None:
+        def answered(value: bool | None) -> None:
             if not future.done():
                 future.set_result(bool(value))
 

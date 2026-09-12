@@ -14,7 +14,6 @@ from textual.widgets import Button, Input, Static
 from learn_smolagents.config import LLMConfig, SettingsStore
 from learn_smolagents.ui.theme import (
     BG_BASE,
-    BG_BORDER,
     BG_BORDER_FOCUS,
     BG_OVERLAY,
     COLOR_DANGER,
@@ -219,7 +218,7 @@ class SettingsScreen(ModalScreen[LLMConfig | None]):
                     self.query_one("#llm-test-result", Static).update,
                     f"✓ 连通成功 (HTTP {status})",
                 )
-        except Exception as err:
+        except OSError as err:
             self.app.call_from_thread(
                 self.query_one("#llm-test-result", Static).update,
                 f"ℹ 连接测试反馈: {err}",

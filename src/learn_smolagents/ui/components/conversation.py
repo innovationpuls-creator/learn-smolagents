@@ -59,7 +59,8 @@ class ConversationView(Vertical):
         yield Static("", id="status", markup=False)
 
     @property
-    def log(self) -> RichLog:
+    def log_view(self) -> RichLog:
+        """Timeline widget. Named to avoid shadowing MessagePump.log."""
         return self.query_one("#conversation", RichLog)
 
     def write_entry(
@@ -67,7 +68,7 @@ class ConversationView(Vertical):
         heading: RenderableType | None = None,
         body: RenderableType | None = None,
     ) -> None:
-        log = self.log
+        log = self.log_view
         if heading is not None:
             log.write(heading)
         if body is not None:
@@ -76,7 +77,7 @@ class ConversationView(Vertical):
         self.call_after_refresh(log.scroll_end, animate=False, x_axis=False)
 
     def clear(self) -> None:
-        self.log.clear()
+        self.log_view.clear()
         self.hide_live_thought()
         self.set_status("")
 
@@ -86,7 +87,9 @@ class ConversationView(Vertical):
         if clean:
             live.update(f"◇ 思考中...\n{clean}")
             live.display = True
-            self.call_after_refresh(self.log.scroll_end, animate=False, x_axis=False)
+            self.call_after_refresh(
+                self.log_view.scroll_end, animate=False, x_axis=False
+            )
         else:
             live.update("")
             live.display = False
@@ -101,4 +104,3 @@ class ConversationView(Vertical):
         status.update(message)
         status.set_class(error, "error")
         status.display = bool(message)
-

@@ -1,8 +1,6 @@
 """Tests for modern TUI enhancements: multi-line composer, slash commands, and cancel action."""
 
-import asyncio
 import pytest
-from textual.widgets import RichLog, Static
 
 from learn_smolagents.ui.app import LocalCodeAgentApp
 from learn_smolagents.ui.composer import PromptInput

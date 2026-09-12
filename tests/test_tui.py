@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Protocol
 
 import pytest
+
 from learn_smolagents.ui.app import BACKGROUND, LocalCodeAgentApp
 from learn_smolagents.ui.composer import PromptInput as Input
 
@@ -141,8 +142,13 @@ async def test_long_conversation_scrolls_without_covering_input() -> None:
     app = LocalCodeAgentApp(agent=StubAgent())
     async with app.run_test(size=(48, 18)) as pilot:
         app._append("Agent", "\n\n".join(f"第 {n} 段回答" for n in range(30)))
-        await pilot.pause()
         log = app.query_one("#conversation", RichLog)
+        # The timeline scrolls via call_after_refresh, so allow several refresh
+        # cycles instead of assuming a single pause is always enough.
+        for _ in range(5):
+            await pilot.pause()
+            if log.scroll_y == log.max_scroll_y:
+                break
         assert log.show_vertical_scrollbar
         assert log.scroll_y == log.max_scroll_y
         assert log.region.bottom < app.query_one("#prompt", Input).region.y

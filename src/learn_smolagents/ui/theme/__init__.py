@@ -75,4 +75,3 @@ __all__ = [
     "format_tool_result_header",
     "format_user_turn_header",
 ]
-

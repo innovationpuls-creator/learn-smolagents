@@ -2,12 +2,12 @@ import asyncio
 from unittest.mock import patch
 
 import pytest
-from learn_smolagents.ui.composer import PromptInput as Input
 
+from learn_smolagents.tools.filesystem import build_file_tools
 from learn_smolagents.ui.app import LocalCodeAgentApp
 from learn_smolagents.ui.approval import ApprovalScreen
+from learn_smolagents.ui.composer import PromptInput as Input
 from learn_smolagents.workspace import WorkspaceStore
-from learn_smolagents.tools.filesystem import build_file_tools
 
 
 @pytest.mark.asyncio

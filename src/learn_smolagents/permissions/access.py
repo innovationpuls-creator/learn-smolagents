@@ -12,8 +12,11 @@ class FileAccess:
         self.full_access = full_access
 
     def check_permission(self, path: str, operation: str) -> Path:
+        root = self.workspace.root
+        if root is None:
+            raise ValueError("请先选择工作区")
         target = self.workspace.resolve(path)
-        decision = check_permission(target, self.workspace.root, self.full_access)
+        decision = check_permission(target, root, self.full_access)
         if decision == "allow":
             return target
         elif decision == "ask":

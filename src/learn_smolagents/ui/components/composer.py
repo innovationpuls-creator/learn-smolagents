@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import ClassVar, Protocol, runtime_checkable
 
 from textual.app import ComposeResult
 from textual.binding import Binding, BindingType
@@ -13,14 +13,19 @@ from textual.widgets import Static, TextArea
 from learn_smolagents.ui.theme import (
     ACCENT_ROSE,
     ACCENT_WARM,
-    BG_BASE,
     BG_BORDER,
     BG_BORDER_FOCUS,
     BG_SURFACE,
-    FG_FAINT,
     FG_MUTED,
     FG_PRIMARY,
 )
+
+
+@runtime_checkable
+class _CancelHost(Protocol):
+    """Host app exposing the cancel/quit action, without importing app.py."""
+
+    def action_cancel_or_quit(self) -> None: ...
 
 
 class PromptInput(TextArea):
@@ -126,7 +131,7 @@ class PromptInput(TextArea):
         """Copy selected text, or delegate to app cancel/quit when no selection."""
         if self.selected_text:
             super().action_copy()
-        elif hasattr(self.app, "action_cancel_or_quit"):
+        elif isinstance(self.app, _CancelHost):
             self.app.action_cancel_or_quit()
         else:
             super().action_copy()
