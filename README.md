@@ -6,6 +6,12 @@
 ![Textual](https://img.shields.io/badge/TUI-Textual%208.2-5A45FF)
 ![smolagents](https://img.shields.io/badge/Agent-smolagents%201.26-FFD21E)
 
+## 界面预览
+
+发一个任务，Agent 的思考、代码执行与观察会逐条渲染在时间线里。下面是真实运行的一次提问——统计工作区里的 `.py` 文件数：
+
+![任务执行中的 Local CodeAgent](screenshots/task.png)
+
 ## 为什么做这个
 
 看文档学 smolagents 不够，得有个真实场景把 CodeAgent、工具注册、执行循环串一遍。所以做了这个：Agent 能真的读写磁盘文件，代码量又小到改一处就能看见一处效果。
